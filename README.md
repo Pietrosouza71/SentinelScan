@@ -4,6 +4,8 @@ O SentinelScan é um projeto em desenvolvimento para ajudar profissionais de seg
 
 O projeto tem um site e um programa que salva informações sobre os sistemas que poderão ser testados, as partes incluídas no teste e o histórico de alterações.
 
+**Veja o site:** [pietrosouza71.github.io/SentinelScan](https://pietrosouza71.github.io/SentinelScan/)
+
 > [!IMPORTANT]
 > Por enquanto, o SentinelScan não testa sites nem redes. Os números, nomes e resultados que aparecem no site são apenas exemplos. Ao cadastrar um sistema, a pessoa confirma que tem autorização, mas o programa não consegue verificar isso.
 
