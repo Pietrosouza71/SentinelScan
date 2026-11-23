@@ -1,68 +1,96 @@
 # SentinelScan
 
-**Plataforma em desenvolvimento para organizar engajamentos de Red Team autorizados.**
+O SentinelScan é um projeto em desenvolvimento para ajudar profissionais de segurança a organizar testes de segurança feitos com autorização. Esse tipo de trabalho também é conhecido como **Red Team**.
 
-Interface responsiva e API local para registrar escopo, alvos de laboratório e eventos de auditoria.
+O projeto tem um site e um programa que salva informações sobre os sistemas que poderão ser testados, as partes incluídas no teste e o histórico de alterações.
 
 > [!IMPORTANT]
-> Esta versão não executa varreduras. Números, eventos e alvos exibidos são fictícios. A confirmação no cadastro registra a declaração do operador, mas não comprova autorização.
+> Por enquanto, o SentinelScan não testa sites nem redes. Os números, nomes e resultados que aparecem no site são apenas exemplos. Ao cadastrar um sistema, a pessoa confirma que tem autorização, mas o programa não consegue verificar isso.
 
-## Capturas de tela
+## Imagens do projeto
 
-![Painel SentinelScan — dados demonstrativos](docs/images/dashboard-desktop.png)
+![Painel do SentinelScan em um computador. As informações são exemplos.](docs/images/dashboard-desktop.png)
 
-![Achados e diário do engajamento — dados demonstrativos](docs/images/findings-and-activity.png)
+![Exemplos de problemas encontrados e de atividade. Nada foi testado de verdade.](docs/images/findings-and-activity.png)
 
-## Funcionalidades
+## O que já funciona
 
-- Painel responsivo em HTML, CSS e JavaScript.
-- API REST em FastAPI para cadastrar, consultar e desativar alvos.
-- Registro de escopo, exclusões e referência de autorização declarada.
-- Persistência local em SQLite e trilha de auditoria.
-- Testes automatizados dos endpoints.
+- O site se adapta a diferentes tamanhos de tela.
+- É possível iniciar o programa no computador e abrir o site pelo navegador.
+- O programa salva, mostra e desativa sistemas de laboratório cadastrados.
+- É possível anotar quais partes estão incluídas ou excluídas de um teste.
+- As alterações ficam salvas em um banco de dados local.
+- Há testes automáticos para conferir se algumas partes do programa funcionam.
 
-**Ainda não implementados:** conexão do painel com a API, reconhecimento DNS, Nmap, verificações web, OWASP ZAP e relatórios PDF.
+**Ainda está sendo desenvolvido:** ligar os botões do site ao programa, consultar informações de domínio, verificar sites e redes, criar relatórios em PDF e conectar ferramentas como Nmap e OWASP ZAP. Por isso, esses recursos ainda não fazem testes.
 
-## Tecnologias
+## Tecnologias usadas
 
-HTML5 · CSS3 · JavaScript · Python · FastAPI · SQLite · pytest · HTTPX
+- HTML, CSS e JavaScript para o site.
+- Python e FastAPI para o programa que atende às solicitações do site.
+- SQLite para salvar as informações no computador.
+- pytest e HTTPX para os testes automáticos.
 
-## Executar localmente
+## Como abrir no computador
 
-Requisitos: Python 3.10+ e pip. No PowerShell, na raiz do projeto:
+Você precisa instalar o **Python 3.10 ou mais recente**.
 
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
-```
+1. Abra o PowerShell dentro da pasta do projeto.
+2. Crie um espaço separado para instalar os componentes:
 
-Se `py` não estiver disponível, use `python -m venv .venv`.
+   ```powershell
+   py -m venv .venv
+   ```
 
-- Aplicação: <http://127.0.0.1:8000>
-- Documentação da API: <http://127.0.0.1:8000/docs>
-- Estado da API: <http://127.0.0.1:8000/api/health>
+3. Ative esse espaço:
 
-## Endpoints
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   ```
 
-| Método | Endpoint | Ação |
-| --- | --- | --- |
-| `GET` | `/api/health` | Verificar estado |
-| `GET` | `/api/targets` | Listar alvos ativos |
-| `GET` | `/api/targets?active_only=false` | Listar todos os alvos |
-| `POST` | `/api/targets` | Cadastrar alvo e escopo |
-| `DELETE` | `/api/targets/{id}` | Desativar alvo |
-| `GET` | `/api/audit` | Consultar auditoria |
+4. Instale os componentes necessários:
 
-O cadastro exige `authorization_confirmed: true`, descrição do escopo e um host, não uma URL. Isso registra a confirmação do operador; não verifica a autorização de forma independente.
+   ```powershell
+   python -m pip install -r requirements.txt
+   ```
 
-## Testes
+5. Inicie o programa:
+
+   ```powershell
+   python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
+   ```
+
+Se `py` não funcionar, tente `python` no lugar dele no passo 2.
+
+Com o programa ligado, abra:
+
+- Site: <http://127.0.0.1:8000>
+- Página para testar e entender as solicitações do programa: <http://127.0.0.1:8000/docs>
+- Verificação para confirmar que o programa iniciou: <http://127.0.0.1:8000/api/health>
+
+O programa aceita conexões somente do próprio computador.
+
+## O que o programa pode fazer
+
+| Solicitação | Para que serve |
+| --- | --- |
+| `GET /api/health` | Conferir se o programa iniciou |
+| `GET /api/targets` | Ver os sistemas cadastrados como ativos |
+| `GET /api/targets?active_only=false` | Ver todos os sistemas, inclusive os desativados |
+| `POST /api/targets` | Cadastrar um sistema e descrever o que está incluído no teste |
+| `DELETE /api/targets/{id}` | Desativar um sistema sem apagar seu histórico |
+| `GET /api/audit` | Ver o histórico de alterações |
+
+Ao cadastrar um sistema, informe um nome, o endereço sem `https://`, o que pode ser incluído no teste e confirme que tem autorização. Essa confirmação fica registrada, mas não é conferida por outra pessoa ou serviço.
+
+## Como executar os testes automáticos
+
+Com os componentes instalados, execute na pasta do projeto:
 
 ```powershell
 python -m pytest
 ```
 
-## Uso responsável
+## Segurança
 
-Use somente laboratórios próprios ou ativos com autorização explícita. Antes de integrar scanners, implemente autenticação, validação do escopo em cada execução, limites operacionais e proteções contra destinos fora do escopo. Não exponha esta API na rede nem a utilize para executar testes.
+Use testes de segurança somente em sistemas seus ou para os quais recebeu autorização explícita. Antes de permitir testes reais, ainda será necessário proteger o acesso ao programa e garantir que cada teste respeite os sistemas e limites autorizados. **Não use a versão atual para testar sistemas.**
